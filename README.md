@@ -1,4 +1,4 @@
-  DNS Security and Tunneling Detection Tool
+                                        DNS Security and Tunneling Detection Tool
 Overview
 The DNS Security and Tunneling Detection Tool is a Python-based network security application that monitors DNS traffic in real time or from packet capture (PCAP) files.
 
