@@ -1,98 +1,68 @@
-                                        DNS Security and Tunneling Detection Tool
-Overview
-The DNS Security and Tunneling Detection Tool is a Python-based network security application that monitors DNS traffic in real time or from packet capture (PCAP) files.
+# 📧 Email Header Analyzer 
 
-It detects and helps mitigate DNS-based attacks, including:
+> A powerful Python tool to analyze email headers for phishing, spoofing, and cyber threat detection.  
+> Built to assist **INSA** (Information Network Security Agency of Ethiopia) in securing government email domains.
+---
+## 🌟 Key Features
 
-🔍DNS Tunneling – where attackers hide malicious traffic inside DNS queries.
-🔍DNS Spoofing – where fake DNS responses redirect users to malicious sites.
+- **Deep Email Header Parsing**  
+  Extracts *From*, *To*, *Subject*, *Date*, *Return-Path*, *Message-ID*, and complete `Received` chains.
+- **SPF, DKIM & DMARC Validation**  
+  Validates sender authorization and message integrity using industry standards.
+- **IP & Domain Enrichment**  
+  Leverages WHOIS, RDAP, ASN, and GeoIP data to profile sender infrastructure.
+- **Risk Scoring & Anomaly Detection**  
+  Assigns a risk score (0–100) with human-readable reasons based on suspicious patterns.
+- **Detailed Forensic Reports**  
+  JSON/HTML output for analysts; optionally encrypted for secure handling.
+- **User-Friendly Web Interface**  
+  Flask-based UI to upload raw headers or `.eml` files and instantly get analysis.
+- **Easy MTA Integration**  
+  Supports integration with Postfix/Sendmail via `pymilter` for real-time blocking.
+  
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-This tool helps protect data integrity and confidentiality by identifying suspicious DNS activity and alerting the user.
+📂 Project Structure
+email-header-analyzer/
+│
+├── app.py              # Flask web application
+├── analyzer.py         # Core analysis logic (SPF/DKIM/DMARC, enrichment, scoring)
+├── parser.py           # Email header parsing and IP extraction
+├── requirements.txt    # Project dependencies
+├── README.md           # This documentation
+└── samples/            # Sample email headers for testing
 
-Key Features:
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-📡 Real-Time DNS Monitoring – Capture DNS packets as they occur.
-🔍 DNS Tunneling Detection – Identify unusually long or encoded domain queries that could indicate data exfiltration.
-⚠️ DNS Spoofing Alerts – Detect mismatched or unexpected IP addresses in DNS responses.
-📂 PCAP File Analysis – Load and analyze saved network captures.
-🛡 Custom Blacklist Support – Flag domains from known malicious lists.
-📊 Report Generation – Summarize suspicious activity in a readable format.
+🔎 Sample JSON Output
 
-How It Works:
+{
+  "score": 85,
+  "reasons": [
+    "SPF fail",
+    "DKIM fail",
+    "Domain age < 30 days",
+    "Geolocation mismatch (US vs Ethiopia)"
+  ],
+  "spf": {"result": "fail"},
+  "dkim": {"dkim_pass": false},
+  "dmarc": {"policy": "reject", "result": "fail"},
+  "ip_info": {"country": "United States", "asn": "AS16509"},
+  "whois": {"creation_date": "2025-07-12"}
+}
 
-🔍Packet Capture – Uses scapy to sniff DNS traffic or read from PCAP files.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-🔍Analysis Engine – Checks for:
+⚙ Advanced Features & Future Work
 
-🔍Excessively long domain names.
-
-🔍High frequency of DNS requests to the same domain.
-
-🔍Base64-like or suspiciously encoded queries.
-
-🔍Unexpected DNS response IPs.
-
-🔍Alerts – Logs or displays suspicious DNS events to the user.
-
-🔍Mitigation – Optionally block malicious domains via firewall rules (advanced mode).
-
-Requirements
-
-Python 3.x
-
-Libraries:
-
-bash
-Copy
-Edit
-pip install scapy dnspython
-(Optional) Wireshark or tcpdump for PCAP generation.
-
-Usage
-
-1. Real-Time Monitoring
-bash
-Copy
-Edit
-python dns_security_tool.py --interface eth0
-2. Analyze a PCAP File
-bash
-Copy
-Edit
-python dns_security_tool.py --pcap suspicious_traffic.pcap
-3. Use a Blacklist File
-bash
-Copy
-Edit
-python dns_security_tool.py --pcap suspicious_traffic.pcap --blacklist blacklist.txt
-
-Example Output
+Aggregation & analysis of DMARC reports
+Integration with threat intelligence feeds for proactive blocking
+Automated IP/domain blacklisting and incident ticketing
+Role-based access and audit logging for analyst workflows
+Encrypted report storage with secure key management
 
 
-[ALERT] Possible DNS Tunneling Detected:
-Query: ajd8xk3q9asdlkjasd9as0d9.example.com
-Length: 85 characters
-Source IP: 192.168.1.10
 
-[WARNING] DNS Spoofing Suspected:
-Domain: bank-login.com
-Expected IP: 123.45.67.89
-Received IP: 185.200.55.22
 
-Project Structure
 
-dns_security_tool/
-│── dns_security_tool.py     # Main tool script
-│── blacklist.txt            # Optional malicious domain list
-│── README.md                # Project documentation
-│── sample.pcap              # Example PCAP for testing
 
-Limitations
-
-DNS over HTTPS (DoH) traffic cannot be inspected without HTTPS interception.
-Detection accuracy depends on the blacklist and analysis rules.
-Real-time blocking requires admin privileges.
-Future Improvements
-Machine learning-based tunneling detection.
-Automatic firewall rule integration.
-Web dashboard for monitoring and visualization.
