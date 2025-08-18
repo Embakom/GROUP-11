@@ -1,68 +1,117 @@
-# 📧 Email Header Analyzer 
+# Smart Mail Project
 
-> A powerful Python tool to analyze email headers for phishing, spoofing, and cyber threat detection.  
-> Built to assist **INSA** (Information Network Security Agency of Ethiopia) in securing government email domains.
+Smart Mail is a Python-based FastAPI application that allows you to securely connect to Gmail, scan emails, and manage them programmatically. The project integrates Google OAuth for authentication and supports reading, modifying, and sending emails.
+
 ---
-## 🌟 Key Features
 
-- **Deep Email Header Parsing**  
-  Extracts *From*, *To*, *Subject*, *Date*, *Return-Path*, *Message-ID*, and complete `Received` chains.
-- **SPF, DKIM & DMARC Validation**  
-  Validates sender authorization and message integrity using industry standards.
-- **IP & Domain Enrichment**  
-  Leverages WHOIS, RDAP, ASN, and GeoIP data to profile sender infrastructure.
-- **Risk Scoring & Anomaly Detection**  
-  Assigns a risk score (0–100) with human-readable reasons based on suspicious patterns.
-- **Detailed Forensic Reports**  
-  JSON/HTML output for analysts; optionally encrypted for secure handling.
-- **User-Friendly Web Interface**  
-  Flask-based UI to upload raw headers or `.eml` files and instantly get analysis.
-- **Easy MTA Integration**  
-  Supports integration with Postfix/Sendmail via `pymilter` for real-time blocking.
-  
------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Features
 
-📂 Project Structure
-email-header-analyzer/
+* OAuth 2.0 login with Google
+* Save and refresh tokens automatically (`token.pkl`)
+* Scan and list emails from Gmail
+* Retrieve email snippets for easy viewing
+* Ready-to-use FastAPI endpoints
+
+---
+
+## Project Structure
+
+```
+Smart-Mail/
 │
-├── app.py              # Flask web application
-├── analyzer.py         # Core analysis logic (SPF/DKIM/DMARC, enrichment, scoring)
-├── parser.py           # Email header parsing and IP extraction
-├── requirements.txt    # Project dependencies
-├── README.md           # This documentation
-└── samples/            # Sample email headers for testing
+├─ main.py             # Entry point for FastAPI server
+├─ auth.py             # OAuth login and callback handlers
+├─ email_scanner.py    # Gmail email scanning functionality
+├─ credentials.json    # Google OAuth client secrets (add your own)
+├─ token.pkl           # Saved OAuth token (auto-generated)
+├─ requirements.txt    # Required Python packages
+└─ README.md           # Project documentation
+```
 
------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
-🔎 Sample JSON Output
+## Setup Instructions
 
-{
-  "score": 85,
-  "reasons": [
-    "SPF fail",
-    "DKIM fail",
-    "Domain age < 30 days",
-    "Geolocation mismatch (US vs Ethiopia)"
-  ],
-  "spf": {"result": "fail"},
-  "dkim": {"dkim_pass": false},
-  "dmarc": {"policy": "reject", "result": "fail"},
-  "ip_info": {"country": "United States", "asn": "AS16509"},
-  "whois": {"creation_date": "2025-07-12"}
-}
+1. **Clone the repository:**
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+```bash
+git clone <your-repo-url>
+cd Smart-Mail
+```
 
-⚙ Advanced Features & Future Work
+2. **Create a virtual environment (optional but recommended):**
 
-Aggregation & analysis of DMARC reports
-Integration with threat intelligence feeds for proactive blocking
-Automated IP/domain blacklisting and incident ticketing
-Role-based access and audit logging for analyst workflows
-Encrypted report storage with secure key management
+```bash
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+```
 
+3. **Install dependencies:**
 
+```bash
+pip install -r requirements.txt
+```
 
+4. **Add Google OAuth credentials:**
 
+* Download your `credentials.json` from Google Cloud Console.
+* Place it in the project root.
 
+5. **Run the server:**
 
+```bash
+uvicorn main:app --reload
+```
+
+6. **Open in browser:**
+
+* Home: `http://127.0.0.1:8000/`
+* Login: `http://127.0.0.1:8000/auth/login`
+* Scan Emails: `http://127.0.0.1:8000/scan`
+
+---
+
+## API Endpoints
+
+| Endpoint         | Method | Description                                    |
+| ---------------- | ------ | ---------------------------------------------- |
+| `/`              | GET    | Returns a welcome message                      |
+| `/auth/login`    | GET    | Initiates Google OAuth login                   |
+| `/auth/callback` | GET    | Callback URL for OAuth                         |
+| `/scan`          | GET    | Scans Gmail inbox and returns latest 10 emails |
+
+---
+
+## Notes
+
+* **Token Handling:** The `token.pkl` file is generated after successful OAuth login and contains your access and refresh tokens.
+* **Privacy:** Never commit `credentials.json` with real credentials to a public repository.
+* **Email Scan:** Currently fetches the latest 10 emails and their snippets.
+
+---
+
+## Contributing
+
+1. Fork the repo
+2. Create a new branch: `git checkout -b feature-name`
+3. Commit your changes: `git commit -m 'Add some feature'`
+4. Push to the branch: `git push origin feature-name`
+5. Open a Pull Request
+
+---
+
+## License
+
+This project is open-source and available under the MIT License.
+
+---
+
+## Screenshots
+
+![Home Page]
+![Scan Result]
+
+---
+
+**Smart Mail** – Make Gmail management smarter and easier!
